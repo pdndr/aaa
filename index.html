@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صدای ارتعاش مغز</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&family=Cormorant+Garamond:wght@300;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#050510;--bg2:#0a0a1e;--surface:#0f0f2d;--surface2:#1a1a3e;--glass:rgba(15,15,45,.7);
+  --accent:#00f0ff;--accent2:#9333ea;--accent3:#f43f5e;--text:#e8e4f0;--text-muted:#6b6680;
+  --card-radius:18px;--font:'Vazirmatn',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;direction:rtl}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(147,51,234,.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(0,240,255,.06) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+/* ======== FOOTER CREDIT ======== */
+.footer-credit{
+  position:relative;z-index:2;
+  text-align:center;
+  padding:40px 20px 30px;
+  border-top:1px solid rgba(255,255,255,.04);
+  margin-top:20px;
+}
+.footer-credit .credit-name{
+  font-size:1.3rem;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:6px;
+  letter-spacing:1px;
+}
+.footer-credit .credit-phone{
+  font-size:1rem;
+  color:var(--accent);
+  font-weight:700;
+  letter-spacing:2px;
+  direction:ltr;
+  font-family:'Cormorant Garamond',serif;
+}
+.footer-credit .credit-label{
+  font-size:.8rem;
+  color:var(--text-muted);
+  margin-bottom:10px;
+  font-weight:300;
+}
+.footer-credit .credit-divider{
+  width:60px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  margin:12px auto;
+  border-radius:1px;
+}
+.footer-credit .credit-glow{
+  display:inline-block;
+  padding:12px 30px;
+  border-radius:16px;
+  background:linear-gradient(135deg,rgba(0,240,255,.06),rgba(147,51,234,.06));
+  border:1px solid rgba(0,240,255,.15);
+  box-shadow:0 0 30px rgba(0,240,255,.08);
+}
+
+/* ======== MODAL ======== */
+.modal-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s ease}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border:1px solid rgba(0,240,255,.2);border-radius:20px;padding:40px;max-width:520px;width:90%;text-align:center;transform:scale(.9);transition:transform .4s ease}
+.modal-overlay.show .modal{transform:scale(1)}
+.modal h2{font-size:1.5rem;margin-bottom:16px;color:var(--accent)}
+.modal p{font-size:.95rem;line-height:2;color:var(--text-muted);margin-bottom:24px}
+.modal button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:14px 36px;border-radius:12px;font-family:var(--font);font-size:1rem;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.modal button:hover{transform:scale(1.05);box-shadow:0 0 30px rgba(0,240,255,.3)}
+
+/* ======== HEADER ======== */
+header{position:relative;z-index:2;text-align:center;padding:40px 20px 20px}
+header h1{font-size:clamp(1.5rem,4vw,2.4rem);font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.5px}
+header .sub{font-size:clamp(.85rem,2vw,1.05rem);color:var(--text-muted);margin-top:6px;font-weight:300;letter-spacing:1px}
+header .sub span{color:var(--accent);font-weight:500}
+.header-line{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:16px auto 0;border-radius:1px}
+
+/* ======== FILTERS ======== */
+.filters{position:relative;z-index:2;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:10px 20px 24px;max-width:900px;margin:0 auto}
+.filter-pill{background:var(--surface);border:1px solid rgba(255,255,255,.06);border-radius:30px;padding:8px 20px;font-family:var(--font);font-size:.82rem;color:var(--text-muted);cursor:pointer;transition:all .3s ease;white-space:nowrap}
+.filter-pill:hover,.filter-pill.active{background:linear-gradient(135deg,rgba(0,240,255,.15),rgba(147,51,234,.15));color:var(--text);border-color:rgba(0,240,255,.3);box-shadow:0 0 20px rgba(0,240,255,.1)}
+
+/* ======== SEARCH ======== */
+.search-wrap{position:relative;z-index:2;max-width:500px;margin:0 auto 20px;padding:0 20px}
+.search-wrap input{width:100%;background:var(--surface);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px 20px;font-family:var(--font);font-size:.9rem;color:var(--text);outline:none;transition:border-color .3s}
+.search-wrap input::placeholder{color:var(--text-muted)}
+.search-wrap input:focus{border-color:rgba(0,240,255,.4)}
+
+/* ======== GRID ======== */
+.grid{position:relative;z-index:2;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;padding:0 20px 40px;max-width:1400px;margin:0 auto}
+.card{background:var(--surface);border:1px solid rgba(255,255,255,.04);border-radius:var(--card-radius);padding:22px;position:relative;overflow:hidden;transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;cursor:pointer;opacity:0;animation:cardIn .5s ease forwards}
+.card:hover{transform:translateY(-5px);border-color:rgba(0,240,255,.2);box-shadow:0 16px 48px rgba(0,0,0,.4),0 0 30px var(--card-glow,rgba(0,240,255,.08))}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-color,var(--accent));opacity:.7}
+.card-icon{font-size:2.2rem;width:56px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--card-bg,rgba(0,240,255,.08));margin-bottom:14px;box-shadow:0 0 20px var(--card-glow,rgba(0,240,255,.1))}
+.card-title{font-size:1.05rem;font-weight:700;line-height:1.6;margin-bottom:4px}
+.card-eng{font-family:'Cormorant Garamond',serif;font-size:.78rem;color:var(--text-muted);font-weight:300;letter-spacing:.5px;margin-bottom:10px}
+.card-badge{display:inline-block;font-size:.7rem;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.05);color:var(--text-muted);margin-bottom:12px}
+.card-desc{font-size:.82rem;line-height:1.8;color:var(--text-muted);margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-bottom{display:flex;align-items:center;justify-content:space-between}
+.card-freq{font-size:.72rem;color:var(--text-muted);font-family:'Cormorant Garamond',serif}
+.play-btn{width:42px;height:42px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:1.1rem;cursor:pointer;transition:transform .2s,box-shadow .2s;display:flex;align-items:center;justify-content:center}
+.play-btn:hover{transform:scale(1.15);box-shadow:0 0 20px rgba(0,240,255,.3)}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ======== VISUALIZER ======== */
+#visualizer{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;pointer-events:none;opacity:0;transition:opacity 1s ease}
+#visualizer.active{opacity:1}
+.dim-overlay{position:fixed;inset:0;z-index:1;background:rgba(5,5,16,.5);opacity:0;pointer-events:none;transition:opacity .8s}
+.dim-overlay.active{opacity:1}
+
+/* ======== PLAYER ======== */
+.player{position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--glass);backdrop-filter:blur(24px) saturate(1.4);border-top:1px solid rgba(255,255,255,.06);padding:16px 24px;transform:translateY(100%);transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.player.visible{transform:translateY(0)}
+.player-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.player-icon{font-size:2rem;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(0,240,255,.08);flex-shrink:0}
+.player-info{flex:1;min-width:180px}
+.player-title{font-size:.95rem;font-weight:700;margin-bottom:2px}
+.player-desc{font-size:.75rem;color:var(--text-muted);line-height:1.6;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.player-warning{font-size:.75rem;color:#f59e0b;margin-top:4px;animation:warningPulse 2s ease infinite}
+@keyframes warningPulse{0%,100%{opacity:1}50%{opacity:.5}}
+.player-controls{display:flex;align-items:center;gap:12px}
+.ctrl-btn{width:44px;height:44px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:1.2rem;cursor:pointer;transition:transform .2s,box-shadow .2s;display:flex;align-items:center;justify-content:center}
+.ctrl-btn:hover{transform:scale(1.1);box-shadow:0 0 20px rgba(0,240,255,.4)}
+.ctrl-btn.stop{background:linear-gradient(135deg,#f43f5e,#e11d48)}
+.player-volume{display:flex;align-items:center;gap:8px}
+.player-volume span{font-size:.8rem;color:var(--text-muted)}
+.vol-slider{-webkit-appearance:none;appearance:none;width:80px;height:4px;border-radius:2px;background:var(--surface2);outline:none}
+.vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 8px rgba(0,240,255,.4)}
+.player-progress{flex-basis:100%;display:flex;align-items:center;gap:10px;margin-top:4px}
+.progress-bar{flex:1;height:4px;border-radius:2px;background:var(--surface2);overflow:hidden;cursor:pointer}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .3s linear;width:0%}
+.time-label{font-size:.7rem;color:var(--text-muted);font-family:'Cormorant Garamond',serif;min-width:42px;text-align:center}
+.brain-pulse{width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent);animation:brainPulse 1s ease infinite;flex-shrink:0}
+@keyframes brainPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.5}}
+
+/* ======== RESPONSIVE ======== */
+@media(max-width:640px){
+  .grid{grid-template-columns:1fr;padding:0 12px 40px}
+  .player-inner{gap:10px}
+  .player-desc{display:none}
+  .player-volume span{display:none}
+  .filters{gap:6px}
+  .filter-pill{padding:6px 14px;font-size:.75rem}
+  .footer-credit .credit-name{font-size:1.1rem}
+  .footer-credit .credit-phone{font-size:.9rem}
+}
+</style>
+</head>
+<body>
+
+<!-- SAFETY MODAL -->
+<div id="safetyModal" class="modal-overlay">
+  <div class="modal">
+    <h2>⚠️ هشدار ایمنی</h2>
+    <p>اگر صرع، بیماری قلبی، اختلال دو‌قطبی یا بارداری دارید، لطفاً قبل از استفاده با پزشک مشورت کنید.<br><br>
+    در حین گوش دادن، از فعالیت‌هایی که نیاز به هوشیاری کامل دارند (مثل رانندگی) خودداری کنید.<br><br>
+    از هدفون استریو استفاده کنید.<br><br>
+    این تکنولوژی صرفاً جنبه آرام‌سازی و خودیاری دارد و جایگزین درمان پزشکی نیست.</p>
+    <button id="acceptSafety">آگاهم و می‌پذیرم</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <h1>صدای ارتعاش مغز</h1>
+  <p class="sub">Brain Vibration Sound — <span>گوش کن، هم‌نوا شو، تغییر کن</span></p>
+  <div class="header-line"></div>
+</header>
+
+<!-- FILTERS -->
+<div class="filters" id="filters"></div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <input type="text" id="searchInput" placeholder="جستجو در ۱۰۰ حالت ذهنی...">
+</div>
+
+<!-- GRID -->
+<main class="grid" id="grid"></main>
+
+<!-- FOOTER CREDIT -->
+<footer class="footer-credit">
+  <div class="credit-glow">
+    <div class="credit-label">طراحی و توسعه</div>
+    <div class="credit-name">اکبر پدندر</div>
+    <div class="credit-divider"></div>
+    <div class="credit-phone">📞 09141157046</div>
+  </div>
+</footer>
+
+<!-- VISUALIZER -->
+<canvas id="visualizer"></canvas>
+<div class="dim-overlay" id="dimOverlay"></div>
+
+<!-- PLAYER -->
+<div class="player" id="player">
+  <div class="player-inner">
+    <div class="player-icon" id="pIcon"></div>
+    <div class="player-info">
+      <div class="player-title" id="pTitle"></div>
+      <div class="player-desc" id="pDesc"></div>
+      <div class="player-warning" id="pWarning" style="display:none"></div>
+    </div>
+    <div class="player-controls">
+      <button class="ctrl-btn" id="playPauseBtn" title="پخش/توقف">▶</button>
+      <button class="ctrl-btn stop" id="stopBtn" title="توقف کامل">■</button>
+    </div>
+    <div class="player-volume">
+      <span>🔊</span>
+      <input type="range" class="vol-slider" id="volSlider" min="0" max="100" value="60">
+    </div>
+    <div class="brain-pulse" id="brainPulse" style="display:none"></div>
+    <div class="player-progress">
+      <span class="time-label" id="timeElapsed">00:00</span>
+      <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="time-label" id="timeRemaining">20:00</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+//  STATE DATABASE — 100 NeuroPrint States
+// ================================================================
+const STATES = [
+// ---- 1-15: ثروت و فراوانی ----
+{id:1,title:"ارتعاش ثروت مطلق",englishTitle:"Absolute Wealth Vibration",category:"ثروت و فراوانی",description:"این فرکانس، ذهن شما را به سطحی از آگاهی می‌برد که ثروت را نه به‌عنوان هدف، بلکه به‌عنوان طبیعت ذاتی شما می‌بیند. مغز شما مانند آهنربایی می‌شود که فرصت‌ها و منابع مالی را بدون تلاش جذب می‌کند.",scientificBasis:"High Gamma coherence (40Hz) in prefrontal cortex + Theta (6Hz) in temporal lobes for subconscious reprogramming",frequencyBase:528,binauralBeat:6,duration:1200,colorTheme:"#d4af37",icon:"💰"},
+{id:2,title:"جذب فرصت طلایی",englishTitle:"Attracting Golden Opportunities",category:"ثروت و فراوانی",description:"ذهن شما در این حالت، مانند یک رادار فوق‌پیشرفته عمل می‌کند که فرصت‌های نامرئی را شناسایی و جذب می‌کند. حس ششم مالی شما بیدار می‌شود.",scientificBasis:"Alpha-Theta border (8Hz) enhances pattern recognition + 40Hz Gamma for heightened awareness",frequencyBase:396,binauralBeat:8,duration:1200,colorTheme:"#c9a227",icon:"🌟"},
+{id:3,title:"بخشندگی میلیاردرها",englishTitle:"Billionaire Generosity Mindset",category:"ثروت و فراوانی",description:"فرکانسی که ذهن را از حالت کمبود به فراوانی مطلق تغییر می‌دهد. بخشیدن بدون ترس، سرمایه‌گذاری بدون شک. ذهن ثروتمندان واقعی اینگونه کار می‌کند.",scientificBasis:"High Alpha (12Hz) for abundance mindset + Gamma (40Hz) for expansive consciousness",frequencyBase:432,binauralBeat:12,duration:1200,colorTheme:"#e8b923",icon:"🎁"},
+{id:4,title:"ارتعاش وراثت و بادآورده",englishTitle:"Inheritance & Windfall Vibration",category:"ثروت و فراوانی",description:"فرکانسی نادر که ذهن شما را با الگوی دریافت ناگهانی ثروت هم‌فاز می‌کند. این حالت، مقاومت‌های ناخودآگاه در برابر پول بادآورده را از بین می‌برد.",scientificBasis:"Theta (5Hz) deep subconscious reprogramming + 174Hz Solfeggio for foundation of evolution",frequencyBase:174,binauralBeat:5,duration:1200,colorTheme:"#bfa046",icon:"🏦"},
+{id:5,title:"فرکانس بخت‌آزمایی و شانس",englishTitle:"Lottery & Luck Frequency",category:"ثروت و فراوانی",description:"حالت ذهنی‌ای که شانس را از یک مفهوم تصادفی به یک جریان قابل‌کنترل تبدیل می‌کند. ذهن شما الگوهای پنهان را درک می‌کند.",scientificBasis:"Theta-Alpha bridge (7Hz) enhances intuition + Gamma bursts (44Hz) for synchronicity awareness",frequencyBase:444,binauralBeat:7,duration:1200,colorTheme:"#d4a017",icon:"🎰"},
+{id:6,title:"ذهنیت سرمایه‌گذار هوشمند",englishTitle:"Smart Investor Mindset",category:"ثروت و فراوانی",description:"ترکیبی از تحلیل منطقی و شهود مالی. در این حالت، مغز شما همزمان از هر دو نیمکره استفاده می‌کند تا بهترین تصمیمات سرمایه‌گذاری را بگیرید.",scientificBasis:"Balanced Left-Right hemisphere coherence at 14Hz (Alpha) + 32Hz Gamma for rapid data processing",frequencyBase:256,binauralBeat:14,duration:1200,colorTheme:"#a67c00",icon:"📊"},
+{id:7,title:"جریان پول بی‌وقفه",englishTitle:"Unstoppable Money Flow",category:"ثروت و فراوانی",description:"پول مانند رودخانه‌ای می‌شود که مداوم به سمت شما جریان دارد. این فرکانس مقاومت‌های ذهنی مانند «پول کافی نیست» را از بین می‌برد.",scientificBasis:"Sustained Alpha (10Hz) for flow state + Theta (6Hz) for belief system override",frequencyBase:639,binauralBeat:10,duration:1200,colorTheme:"#b8860b",icon:"🌊"},
+{id:8,title:"ارتعاش تجارت جهانی",englishTitle:"Global Commerce Vibration",category:"ثروت و فراوانی",description:"ذهن کارآفرین بین‌المللی. این فرکانس، دید شما را از محلی به جهانی تغییر می‌دهد و ظرفیت درآمدی شما را چند برابر می‌کند.",scientificBasis:"Beta-Gamma bridge (20-35Hz) for strategic global thinking + 417Hz for facilitating change",frequencyBase:417,binauralBeat:20,duration:1200,colorTheme:"#8b7355",icon:"🌍"},
+{id:9,title:"فرکانس شراکت سودآور",englishTitle:"Profitable Partnership Frequency",category:"ثروت و فراوانی",description:"جذب شرکای تجاری ایده‌آل و ایجاد روابط حرفه‌ای که هر دو طرف را ثروتمند می‌کند. ذهن شما ارتعاش همکاری سودآور ساطع می‌کند.",scientificBasis:"639Hz Solfeggio for connection + Alpha (10Hz) for harmonious social cognition",frequencyBase:639,binauralBeat:10,duration:1200,colorTheme:"#a0855b",icon:"🤝"},
+{id:10,title:"آزادی مالی مطلق",englishTitle:"Absolute Financial Freedom",category:"ثروت و فراوانی",description:"تصور کنید هیچ نگرانی مالی ندارید. این فرکانس، حس آزادی مالی مطلق را در سلول‌های مغزی شما حک می‌کند.",scientificBasis:"Theta (4Hz) for deep belief encoding + 528Hz for transformation + Beta (18Hz) for goal-oriented action",frequencyBase:528,binauralBeat:4,duration:1200,colorTheme:"#c8a951",icon:"🕊️"},
+{id:11,title:"ارتعاش قیمت‌گذاری لوکس",englishTitle:"Luxury Pricing Vibration",category:"ثروت و فراوانی",description:"ارزش‌گذاری واقعی روی توانایی‌ها و محصولات. دیگر ارزان نمی‌فروشید. ذهن شما ارزش واقعی خود را درک می‌کند.",scientificBasis:"High Beta (22Hz) for self-worth activation + Gamma (40Hz) for premium value perception",frequencyBase:285,binauralBeat:22,duration:1200,colorTheme:"#daa520",icon:"👑"},
+{id:12,title:"جذب چک و حواله",englishTitle:"Attracting Payments & Transfers",category:"ثروت و فراوانی",description:"فرکانسی که ذهن شما را در حالت دریافت مداوم قرار می‌دهد. پول از مسیرهای غیرمنتظره به سمت شما سرازیر می‌شود.",scientificBasis:"Alpha-Theta (8Hz) for receptivity + 396Hz for liberating limiting beliefs about receiving",frequencyBase:396,binauralBeat:8,duration:1200,colorTheme:"#c19a3e",icon:"📩"},
+{id:13,title:"فرکانس طلای دیجیتال",englishTitle:"Digital Gold Frequency",category:"ثروت و فراوانی",description:"ذهن شما با دنیای دیجیتال و ارزهای نوین هم‌فاز می‌شود. درک الگوهای بازار دیجیتال و فرصت‌های نهفته در آن.",scientificBasis:"Gamma (38Hz) for digital pattern recognition + Beta (16Hz) for analytical processing",frequencyBase:144,binauralBeat:38,duration:1200,colorTheme:"#bfa046",icon:"₿"},
+{id:14,title:"ارتعاش ملک و مستغلات",englishTitle:"Real Estate Vibration",category:"ثروت و فراوانی",description:"جذب ملک ایده‌آل و فرصت‌های سرمایه‌گذاری در املاک. ذهن شما ارزش زمین و ساختمان را در سطح انرژی احساس می‌کند.",scientificBasis:"Alpha (10Hz) for spatial cognition + Theta (6Hz) for intuitive location sensing",frequencyBase:136,binauralBeat:10,duration:1200,colorTheme:"#8b6914",icon:"🏠"},
+{id:15,title:"ذهن ثروتمند خودساخته",englishTitle:"Self-Made Millionaire Mind",category:"ثروت و فراوانی",description:"ترکیب نادری از اراده آهنین، خلاقیت مالی و بی‌باکی در ریسک. این فرکانس ذهن میلیونرهای خودساخته را شبیه‌سازی می‌کند.",scientificBasis:"High Beta (25Hz) for drive + Gamma (45Hz) for creative solutions + Theta (5Hz) for resilience encoding",frequencyBase:480,binauralBeat:25,duration:1200,colorTheme:"#d4af37",icon:"🏆"},
+
+// ---- 16-30: عشق و جذابیت ----
+{id:16,title:"ارتعاش عشق بی‌قید و شرط",englishTitle:"Unconditional Love Vibration",category:"عشق و جذابیت",description:"عمیق‌ترین سطح عشق‌ورزی بدون انتظار. این فرکانس قلب شما را باز می‌کند و ارتعاشی ساطع می‌کنید که هر موجود زنده‌ای را جذب می‌کند.",scientificBasis:"0.1Hz heart coherence + Alpha (10Hz) for emotional openness + 528Hz love frequency",frequencyBase:528,binauralBeat:10,duration:1200,colorTheme:"#e91e63",icon:"❤️"},
+{id:17,title:"جذب عشق رمانتیک",englishTitle:"Attracting Romantic Love",category:"عشق و جذابیت",description:"اگر تنها هستید، این فرکانس نیمه گمشده شما را جذب می‌کند. ذهن شما تصویر واضحی از عشق ایده‌آل می‌سازد و آن را به کیهان ارسال می‌کند.",scientificBasis:"Theta (7Hz) for visualization + Alpha (10Hz) for emotional receptivity + 639Hz for relationships",frequencyBase:639,binauralBeat:7,duration:1200,colorTheme:"#f06292",icon:"💕"},
+{id:18,title:"جذابیت مغناطیسی",englishTitle:"Magnetic Charisma",category:"عشق و جذابیت",description:"شما تبدیل به شخصی می‌شوید که همه ناخودآگاه جذبش می‌شوند. اعتمادبه‌نفس طبیعی، لبخند مرموز و حضوری که فراموش‌نشدنی است.",scientificBasis:"High Alpha (12Hz) for social confidence + Gamma (40Hz) for charismatic presence",frequencyBase:432,binauralBeat:12,duration:1200,colorTheme:"#ff4081",icon:"🧲"},
+{id:19,title:"فرکانس آشتی و بخشش",englishTitle:"Reconciliation & Forgiveness",category:"عشق و جذابیت",description:"رهایی از کینه‌ها و زخم‌های قدیمی. این فرکانس، انرژی سمی گذشته را پاک می‌کند و فضا را برای آشتی واقعی باز می‌کند.",scientificBasis:"Theta (4Hz) for emotional release + 396Hz for liberating guilt + 741Hz for expression",frequencyBase:396,binauralBeat:4,duration:1200,colorTheme:"#ec407a",icon:"🕊️"},
+{id:20,title:"خودعشقی عمیق",englishTitle:"Deep Self-Love",category:"عشق و جذابیت",description:"قبل از عشق به دیگری، باید خودت را دوست بداری. این فرکانس، تمام بخش‌هایی از وجودت که طرد کرده‌ای را در آغوش می‌گیرد.",scientificBasis:"432Hz natural tuning + Alpha (10Hz) for self-compassion circuits + Theta (6Hz) for inner child healing",frequencyBase:432,binauralBeat:6,duration:1200,colorTheme:"#f48fb1",icon:"💗"},
+{id:21,title:"ارتعاش ازدواج موفق",englishTitle:"Successful Marriage Frequency",category:"عشق و جذابیت",description:"فرکانسی که تعادل بین استقلال و وابستگی را در رابطه ایجاد می‌کند. احترام متقابل، صمیمیت عمیق و ارتباط مؤثر.",scientificBasis:"Alpha coherence (10Hz) between both hemispheres + 639Hz for harmonious relationships",frequencyBase:639,binauralBeat:10,duration:1200,colorTheme:"#d81b60",icon:"💍"},
+{id:22,title:"جذب هم‌روح",englishTitle:"Attracting Your Soulmate",category:"عشق و جذابیت",description:"ارتعاش خاصی که نیمه گمشده شما را از میان میلیاردها نفر پیدا می‌کند. فرکانسی که فقط کسی که مال شماست را جذب می‌کند.",scientificBasis:"Theta-Gamma coupling (6Hz + 40Hz) for quantum entanglement of consciousness + 528Hz",frequencyBase:528,binauralBeat:6,duration:1200,colorTheme:"#e91e63",icon:"✨"},
+{id:23,title:"فرکانس شور و اشتیاق",englishTitle:"Passion & Desire",category:"عشق و جذابیت",description:"آتش درونی شما شعله‌ور می‌شود. این فرکانس، انرژی جنسی و عاطفی شما را بیدار می‌کند و اشتیاق زندگی را چند برابر می‌کند.",scientificBasis:"Beta (18Hz) for arousal + Gamma (35Hz) for sensory heightening + 285Hz for energy field influence",frequencyBase:285,binauralBeat:18,duration:1200,colorTheme:"#ff1744",icon:"🔥"},
+{id:24,title:"ارتعاش وفاداری عمیق",englishTitle:"Deep Loyalty Vibration",category:"عشق و جذابیت",description:"ایجاد پیوندی عمیق و ناگسستنی با کسی که دوستش دارید. وفاداری نه از وظیفه، بلکه از عشق عمیق ناشی می‌شود.",scientificBasis:"Oxytocin-entrainment Alpha (10Hz) + 432Hz for heart-opening + Theta (5Hz) for bonding",frequencyBase:432,binauralBeat:10,duration:1200,colorTheme:"#ad1457",icon:"🫀"},
+{id:25,title:"جذابیت جنسی طبیعی",englishTitle:"Natural Sexual Magnetism",category:"عشق و جذابیت",description:"بدون تلاش، بدون تظاهر. فقط حضور شما کافی است. این فرکانس، فرومون‌های انرژیتیک شما را تقویت می‌کند.",scientificBasis:"Low Beta (15Hz) for primal attraction circuits + Gamma (38Hz) for sensory magnetism",frequencyBase:210,binauralBeat:15,duration:1200,colorTheme:"#c2185b",icon:"💋"},
+{id:26,title:"فرکانس رابطه سالم",englishTitle:"Healthy Relationship Frequency",category:"عشق و جذابیت",description:"الگوی ذهنی‌ای که روابط سمی را دفع و روابط سالم را جذب می‌کند. مرزگذاری سالم با عشق همراه است.",scientificBasis:"Balanced Alpha-Beta (12Hz) for emotional regulation + 639Hz for healthy connections",frequencyBase:639,binauralBeat:12,duration:1200,colorTheme:"#f06292",icon:"🌱"},
+{id:27,title:"ارتعاش بخشش و رها‌سازی",englishTitle:"Forgiveness & Release",category:"عشق و جذابیت",description:"رها کردن تمام خشم، ناراحتی و سرخوردگی. آزادی واقعی وقتی شروع می‌شود که ببخشی و رها کنی.",scientificBasis:"Delta-Theta (3Hz) for deep emotional purging + 396Hz + 417Hz Solfeggio liberation",frequencyBase:396,binauralBeat:3,duration:1200,colorTheme:"#f48fb1",icon:"🍃"},
+{id:28,title:"عشق به زندگی",englishTitle:"Love of Life",category:"عشق و جذابیت",description:"احساس شور و شوق عمیق نسبت به هر لحظه زندگی. وقتی عاشق زندگی شوید، زندگی هم عاشق شما می‌شود.",scientificBasis:"Alpha (10Hz) for joy circuits + 528Hz transformation + Dopamine-entrainment patterns",frequencyBase:528,binauralBeat:10,duration:1200,colorTheme:"#e91e63",icon:"🌸"},
+{id:29,title:"فرکانس جذب دوست صمیمی",englishTitle:"Attracting True Friendship",category:"عشق و جذابیت",description:"جذب دوستان واقعی که شما را بالا ببرند. این فرکانس، فرکانس دوستی عمیق و بی‌ریا را ساطع می‌کند.",scientificBasis:"Alpha (10Hz) for social bonding + 639Hz for connection + Theta (7Hz) for trust encoding",frequencyBase:639,binauralBeat:10,duration:1200,colorTheme:"#ec407a",icon:"🫂"},
+{id:30,title:"ارتعاش احترام متقابل",englishTitle:"Mutual Respect Vibration",category:"عشق و جذابیت",description:"شما احترامی طبیعی از دیگران دریافت می‌کنید. این فرکانس، ارزش ذاتی شما را به دیگران یادآوری می‌کند.",scientificBasis:"Beta (15Hz) for dignity circuits + 741Hz for intuitive expression + Alpha (11Hz) for social cognition",frequencyBase:741,binauralBeat:15,duration:1200,colorTheme:"#d81b60",icon:"🙏"},
+
+// ---- 31-45: موفقیت و قدرت ----
+{id:31,title:"ارتعاش رهبری کاریزماتیک",englishTitle:"Charismatic Leadership",category:"موفقیت و قدرت",description:"رهبری که نه با زور، بلکه با کاریزمای درونی هدایت می‌کند. مردم ناخودآگاه از شما پیروی می‌کنند چون حضورتان الهام‌بخش است.",scientificBasis:"Gamma (40Hz) prefrontal coherence + High Beta (22Hz) for assertive speech + 852Hz for leadership intuition",frequencyBase:852,binauralBeat:40,duration:1200,colorTheme:"#1565c0",icon:"🦅"},
+{id:32,title:"فرکانس مذاکره برنده",englishTitle:"Winner Negotiation Frequency",category:"موفقیت و قدرت",description:"در هر مذاکره‌ای پیروز شوید. این فرکانس، ذهن شما را در حالت خواندن زبان بدن، تشخیص دروغ و ارائه مؤثر قرار می‌دهد.",scientificBasis:"Beta (18Hz) for strategic thinking + Gamma (36Hz) for micro-expression reading",frequencyBase:320,binauralBeat:18,duration:1200,colorTheme:"#0d47a1",icon:"♟️"},
+{id:33,title:"اعتمادبه‌نفس تزلزل‌ناپذیر",englishTitle:"Unshakable Self-Confidence",category:"موفقیت و قدرت",description:"شک به خود مانند دود محو می‌شود. این فرکانس، ستون فقرات عاطفی شما را از فولاد می‌سازد. هیچ چیز نمی‌تواند شما را تکان دهد.",scientificBasis:"High Beta (25Hz) for amygdala regulation + Gamma (40Hz) for prefrontal override of fear responses",frequencyBase:480,binauralBeat:25,duration:1200,colorTheme:"#1976d2",icon:"💎"},
+{id:34,title:"ارتعاش ترفیع و ارتقا",englishTitle:"Promotion & Advancement Vibration",category:"موفقیت و قدرت",description:"دیده شدن، شناخته شدن و پاداش گرفتن. این فرکانس، ارتعاش شایستگی ساطع می‌کند که تصمیم‌گیران را به سمت شما جذب می‌کند.",scientificBasis:"Beta-Gamma (20-35Hz) for performance excellence + 417Hz for facilitating positive change",frequencyBase:417,binauralBeat:20,duration:1200,colorTheme:"#1e88e5",icon:"📈"},
+{id:35,title:"جذب فالوور و مخاطب",englishTitle:"Attracting Followers & Audience",category:"موفقیت و قدرت",description:"صدای شما شنیده می‌شود. این فرکانس، جذابیت رسانه‌ای و قدرت نفوذ اجتماعی شما را تقویت می‌کند.",scientificBasis:"Gamma (40Hz) for charisma amplification + Alpha (12Hz) for authentic self-expression",frequencyBase:396,binauralBeat:40,duration:1200,colorTheme:"#2196f3",icon:"📱"},
+{id:36,title:"فرکانس تصمیم‌گیری سریع",englishTitle:"Rapid Decision Making",category:"موفقیت و قدرت",description:"تردید را کنار بگذارید. این فرکانس، سرعت پردازش مغز را بالا می‌برد و شما را قادر می‌سازد در کسری از ثانیه بهترین تصمیم را بگیرید.",scientificBasis:"High Beta (28Hz) + Gamma (44Hz) for accelerated prefrontal processing",frequencyBase:256,binauralBeat:28,duration:1200,colorTheme:"#42a5f5",icon:"⚡"},
+{id:37,title:"ارتعاش نفوذ کلام",englishTitle:"Power of Speech",category:"موفقیت و قدرت",description:"کلمات شما وزن پیدا می‌کنند. هر جمله‌ای که می‌گویید، تأثیر عمیق و ماندگار بر شنونده می‌گذارد.",scientificBasis:"Beta (16Hz) for linguistic precision + 741Hz for expression + Gamma (38Hz) for tonal authority",frequencyBase:741,binauralBeat:16,duration:1200,colorTheme:"#1565c0",icon:"🗣️"},
+{id:38,title:"ذهن استراتژیک",englishTitle:"Strategic Mind",category:"موفقیت و قدرت",description:"بازی شطرنج زندگی را ۱۰ حرکت جلوتر ببینید. این فرکانس، توانایی برنامه‌ریزی بلندمدت و تحلیل عمیق را فعال می‌کند.",scientificBasis:"Beta (20Hz) for sequential planning + Gamma (35Hz) for multi-variable analysis",frequencyBase:288,binauralBeat:20,duration:1200,colorTheme:"#0d47a1",icon:"🧠"},
+{id:39,title:"فرکانس غلبه بر ترس",englishTitle:"Overcoming Fear",category:"موفقیت و قدرت",description:"ترس‌هایتان را بشکنید. ترس از صحبت کردن، ترس از شکست، ترس از رد شدن — همه در برابر این فرکانس ذوب می‌شوند.",scientificBasis:"Alpha (10Hz) for amygdala calming + High Beta (25Hz) for courageous action + 396Hz liberating fear",frequencyBase:396,binauralBeat:10,duration:1200,colorTheme:"#0d47a1",icon:"🛡️"},
+{id:40,title:"ارتعاش قدرت درونی",englishTitle:"Inner Power Vibration",category:"موفقیت و قدرت",description:"قدرت واقعی از درون می‌آید. این فرکانس، منبع قدرت نامحدود درونی شما را فعال می‌کند. احساس می‌کنید کوه‌ها را جابه‌جا می‌کنید.",scientificBasis:"Theta-Gamma coupling (7Hz + 40Hz) for deep power activation + 528Hz transformation",frequencyBase:528,binauralBeat:7,duration:1200,colorTheme:"#1565c0",icon:"🌋"},
+{id:41,title:"جذب فرصت شغلی ایده‌آل",englishTitle:"Attracting Ideal Career",category:"موفقیت و قدرت",description:"شغلی که عاشقش هستید و درآمد عالی دارد. این فرکانس، مسیر شغلی رویایی شما را آشکار می‌کند.",scientificBasis:"Alpha-Theta (9Hz) for vocational clarity + 852Hz for intuitive life purpose",frequencyBase:852,binauralBeat:9,duration:1200,colorTheme:"#1976d2",icon:"🎯"},
+{id:42,title:"فرکانس مدیریت بحران",englishTitle:"Crisis Management",category:"موفقیت و قدرت",description:"وقتی همه وحشت‌زده‌اند، شما خونسرد و مؤثر عمل می‌کنید. این فرکانس، آرامش در طوفان را به شما می‌دهد.",scientificBasis:"Alpha (11Hz) for calm under pressure + Beta (20Hz) for decisive action + 174Hz for stress foundation relief",frequencyBase:174,binauralBeat:11,duration:1200,colorTheme:"#0d47a1",icon:"🏗️"},
+{id:43,title:"ارتعاش شهرت و اعتبار",englishTitle:"Fame & Credibility",category:"موفقیت و قدرت",description:"نام شما بر سر زبان‌ها می‌افتد. این فرکانس، انرژی شهرت و اعتبار را به سمت شما جذب می‌کند.",scientificBasis:"Gamma (40Hz) for magnetic presence + Alpha (12Hz) for authentic visibility",frequencyBase:963,binauralBeat:40,duration:1200,colorTheme:"#1e88e5",icon:"⭐"},
+{id:44,title:"ذهن رقابتی برنده",englishTitle:"Competitive Winner Mind",category:"موفقیت و قدرت",description:"برنده بودن در DNA ذهنی شما حک می‌شود. این فرکانس، روحیه رقابتی سالم و اشتیاق سیری‌ناپذیر برای بردن را فعال می‌کند.",scientificBasis:"High Beta (24Hz) for competitive drive + Gamma (42Hz) for peak performance state",frequencyBase:340,binauralBeat:24,duration:1200,colorTheme:"#1565c0",icon:"🏅"},
+{id:45,title:"فرکانس نفوذ اجتماعی",englishTitle:"Social Influence",category:"موفقیت و قدرت",description:"نظرات شما اهمیت پیدا می‌کند. این فرکانس، قدرت تأثیرگذاری اجتماعی و توانایی تغییر نگرش دیگران را تقویت می‌کند.",scientificBasis:"Alpha-Beta (14Hz) for social cognition + Gamma (36Hz) for persuasion circuits",frequencyBase:420,binauralBeat:14,duration:1200,colorTheme:"#2196f3",icon:"🌐"},
+
+// ---- 46-60: معنویت و فراآگاهی ----
+{id:46,title:"ارتعاش سامادهی (روشن‌شدگی)",englishTitle:"Samadhi (Enlightenment)",category:"معنویت و فراآگاهی",description:"بالاترین حالت آگاهی که ذهن و جهان یکی می‌شوند. در این حالت، «من» محو می‌شود و فقط هستی خالص باقی می‌ماند.",scientificBasis:"High Gamma coherence (40-80Hz) across entire cortex + Theta (4Hz) in deep structures",frequencyBase:963,binauralBeat:40,duration:1200,colorTheme:"#7c4dff",icon:"🕉️"},
+{id:47,title:"خروج از بدن آگاهانه",englishTitle:"Conscious Astral Projection",category:"معنویت و فراآگاهی",description:"تجربه جدایی آگاهانه از بدن فیزیکی. شناور شدن در فضایی فراتر از ماده. این فرکانس، دروازه سفرهای فراحسی را باز می‌کند.",scientificBasis:"Theta (4Hz) dominant with Gamma bursts (40Hz) + 432Hz for consciousness expansion",frequencyBase:432,binauralBeat:4,duration:1200,colorTheme:"#651fff",icon:"🌀"},
+{id:48,title:"حال خوش عرفانی",englishTitle:"Mystical Ecstasy",category:"معنویت و فراآگاهی",description:"سرخوشی معنوی عمیقی که فراتر از لذت‌های دنیوی است. احساس وصل، نورانیت و شادی بی‌دلیل. این همان حال خوش عارفان است.",scientificBasis:"Theta-Alpha (7Hz) + High Gamma (60Hz) + 528Hz for miraculous transformation",frequencyBase:528,binauralBeat:7,duration:1200,colorTheme:"#7c4dff",icon:"✨"},
+{id:49,title:"تجربه وحدت وجود",englishTitle:"Unity of Being (Wahdat al-Wujud)",category:"معنویت و فراآگاهی",description:"درک عمیق اینکه همه چیز یکی است. مرز بین «من» و «دیگری» محو می‌شود. تجربه‌ای که زندگی شما را برای همیشه تغییر می‌دهد.",scientificBasis:"Full-brain Gamma synchrony (40Hz) + Theta (4Hz) for dissolution of ego boundaries",frequencyBase:963,binauralBeat:4,duration:1200,colorTheme:"#6200ea",icon:"🌊"},
+{id:50,title:"بیداری چشم سوم",englishTitle:"Third Eye Awakening",category:"معنویت و فراآگاهی",description:"بیداری غده صنوبری و فعال‌سازی بینایی درونی. دیدن آنچه چشم معمولی نمی‌بیند: انرژی‌ها، اوراها، حقیقت.",scientificBasis:"Gamma (42Hz) in occipital-parietal junction + Theta (6Hz) for pineal activation",frequencyBase:852,binauralBeat:42,duration:1200,colorTheme:"#6a1b9a",icon:"👁️"},
+{id:51,title:"ارتعاش مدیتیشن عمیق",englishTitle:"Deep Meditation Vibration",category:"معنویت و فراآگاهی",description:"رسیدن به سکوت مطلق ذهن. بدون فکر، بدون نگرانی، فقط بودن. این فرکانس، ذهن میمونی را آرام می‌کند.",scientificBasis:"Theta (5Hz) dominant with Alpha (10Hz) spindles + 432Hz natural harmony",frequencyBase:432,binauralBeat:5,duration:1200,colorTheme:"#4a148c",icon:"🧘"},
+{id:52,title:"فرکانس ارتباط با کیهان",englishTitle:"Cosmic Connection",category:"معنویت و فراآگاهی",description:"احساس اتصال به تمام هستی. دریافت پیام‌های ظریف از کیهان. هم‌زمانی‌ها و نشانه‌ها معنا پیدا می‌کنند.",scientificBasis:"Gamma-Theta coupling (40Hz + 6Hz) + 963Hz for cosmic consciousness activation",frequencyBase:963,binauralBeat:6,duration:1200,colorTheme:"#7c4dff",icon:"🌌"},
+{id:53,title:"ارتعاش عشق الهی",englishTitle:"Divine Love Vibration",category:"معنویت و فراآگاهی",description:"عشقی فراتر از عشق انسانی. احساس محبوب بودن توسط کل هستی. آرامشی عمیق که فقط عشق الهی می‌تواند ایجاد کند.",scientificBasis:"Heart coherence at 0.1Hz + Theta (6Hz) + 528Hz + 639Hz combined for divine love",frequencyBase:528,binauralBeat:6,duration:1200,colorTheme:"#9c27b0",icon:"💫"},
+{id:54,title:"فرکانس کارما‌زدایی",englishTitle:"Karma Cleansing Frequency",category:"معنویت و فراآگاهی",description:"پاکسازی الگوهای کارمایی از زندگی‌های گذشته و حال. آزاد شدن از چرخه‌های تکراری و رسیدن به آزادی واقعی.",scientificBasis:"Delta (2Hz) for deep karmic pattern release + 174Hz for foundation healing + 396Hz for liberation",frequencyBase:174,binauralBeat:2,duration:1200,colorTheme:"#4a148c",icon:"🔄"},
+{id:55,title:"ارتعاش بیداری روحانی",englishTitle:"Spiritual Awakening",category:"معنویت و فراآگاهی",description:"لحظه‌ای که چشم‌های درونی شما باز می‌شود و حقیقت زندگی را می‌بینید. دیگر نمی‌توانید به خواب بروید.",scientificBasis:"Gamma bursts (50Hz) + Theta (7Hz) + 852Hz for returning to spiritual order",frequencyBase:852,binauralBeat:7,duration:1200,colorTheme:"#6a1b9a",icon:"🌅"},
+{id:56,title:"فرکانس شفای روحانی",englishTitle:"Spiritual Healing",category:"معنویت و فراآگاهی",description:"شفای زخم‌های روحانی که از دارو درمان نمی‌شوند. التیام عمیق در سطح روح و انرژی. معجزه‌ها واقعی هستند.",scientificBasis:"432Hz + 528Hz combined for DNA-level healing + Theta (5Hz) for spiritual body repair",frequencyBase:528,binauralBeat:5,duration:1200,colorTheme:"#7b1fa2",icon:"🙏"},
+{id:57,title:"ارتعاش سکوت ذهن",englishTitle:"Mind Silence (Nirodha)",category:"معنویت و فراآگاهی",description:"وقتی تمام افکار متوقف می‌شوند و فقط آگاهی خالص باقی می‌ماند. سکوتی که بلندترین فریاد حقیقت است.",scientificBasis:"Theta (4Hz) dominant slowing all cortical activity + 432Hz for natural peace",frequencyBase:432,binauralBeat:4,duration:1200,colorTheme:"#311b92",icon:"🔇"},
+{id:58,title:"فرکانس درک زمان حال",englishTitle:"Present Moment Awareness",category:"معنویت و فراآگاهی",description:"زندگی فقط در لحظه حال اتفاق می‌افتد. این فرکانس، ذهن شما را از گذشته و آینده رها کرده و به حال می‌آورد.",scientificBasis:"Alpha (10Hz) for present-moment awareness + 741Hz for awakening intuition",frequencyBase:741,binauralBeat:10,duration:1200,colorTheme:"#651fff",icon:"⏳"},
+{id:59,title:"ارتعاش رؤیای آگاهانه",englishTitle:"Lucid Dreaming",category:"معنویت و فراآگاهی",description:"در خواب بیدار شوید و کنترل رؤیاهایتان را به دست بگیرید. پرواز، خلق جهان‌ها و کشف ناخودآگاه در خواب.",scientificBasis:"Theta (5Hz) for hypnagogic state with Gamma (40Hz) for maintaining awareness during REM",frequencyBase:340,binauralBeat:5,duration:1200,colorTheme:"#4a148c",icon:"🌙"},
+{id:60,title:"فرکانس نیایش عمیق",englishTitle:"Deep Prayer Frequency",category:"معنویت و فراآگاهی",description:"نیایشی فراتر از کلمات. ارتباط مستقیم با منبع. در این حالت، دعاها شنیده می‌شوند و پاسخ دریافت می‌شود.",scientificBasis:"Alpha-Theta (8Hz) + 852Hz for spiritual connection + heart coherence at 0.1Hz",frequencyBase:852,binauralBeat:8,duration:1200,colorTheme:"#7c4dff",icon:"🤲"},
+
+// ---- 61-75: حالات خاص و تجربه‌های تغییریافته ----
+{id:61,title:"ارتعاش مستی و رهایی (Mast o Raha)",englishTitle:"Drunkenness & Euphoria (Mast o Raha)",category:"حالات خاص و تجربه‌های تغییریافته",description:"تجربه سرخوشی، رهایی از قیدهای ذهنی، و شل‌شدگی عضلانی بدون مصرف الکل. این فرکانس مغز را وارد حالتی بین بیداری و خواب می‌کند که احساس سبکی، بی‌پروایی و رهایی ایجاد می‌شود. توجه: ممکن است باعث خواب‌آلودگی شود. بعد از گوش دادن رانندگی نکنید.",scientificBasis:"Theta (5Hz) dominant for hypnagogic state + 111Hz mystical frequency + 8Hz isochronic pulse for motor relaxation",frequencyBase:111,binauralBeat:5,duration:1200,colorTheme:"#ff6f00",icon:"🍷",isSpecial:true},
+{id:62,title:"ارتعاش خلسه سایکدلیک",englishTitle:"Psychedelic Trance",category:"حالات خاص و تجربه‌های تغییریافته",description:"سفر ذهنی عمیق بدون مواد. الگوهای هندسی، درک بصری تغییریافته و گشودگی ذهنی فراوان. ذهن شما مرزهای واقعیت را جابه‌جا می‌کند.",scientificBasis:"Theta-Gamma (7Hz + 40Hz) cross-frequency coupling + 432Hz consciousness expansion",frequencyBase:432,binauralBeat:7,duration:1200,colorTheme:"#00e5ff",icon:"🌀"},
+{id:63,title:"خشم مقدس و قدرت نه گفتن",englishTitle:"Sacred Anger & Power of No",category:"حالات خاص و تجربه‌های تغییریافته",description:"خشم سالم و مقدس، قدرت «نه» گفتن بدون احساس گناه. این فرکانس، انرژی خشم را از ویرانگر به خلاق تبدیل می‌کند.",scientificBasis:"High Beta (28Hz) for assertive energy + Gamma (36Hz) for boundary setting + 741Hz for clear expression",frequencyBase:741,binauralBeat:28,duration:1200,colorTheme:"#ff1744",icon:"⚡"},
+{id:64,title:"غم التیام‌بخش",englishTitle:"Healing Sadness",category:"حالات خاص و تجربه‌های تغییریافته",description:"گاهی باید غمگین باشی تا التیام پیدا کنی. این فرکانس، اشک‌های شفابخش را رها می‌کند و قلب شما را پاکسازی می‌کند.",scientificBasis:"Delta-Theta (3Hz) for emotional release + 396Hz for liberating grief + 174Hz for pain relief",frequencyBase:174,binauralBeat:3,duration:1200,colorTheme:"#455a64",icon:"💧"},
+{id:65,title:"خنده بی‌دلیل و سرخوشی",englishTitle:"Uncontrollable Laughter & Euphoria",category:"حالات خاص و تجربه‌های تغییریافته",description:"خنده‌ای از ته دل که هیچ دلیلی ندارد. سرخوشی خالص. این فرکانس، اندورفین طبیعی مغز را سرازیر می‌کند.",scientificBasis:"Gamma (40Hz) in right hemisphere for laughter circuits + Alpha (12Hz) for joy + 528Hz transformation",frequencyBase:528,binauralBeat:40,duration:1200,colorTheme:"#ffd600",icon:"😂"},
+{id:66,title:"ارتعاش بی‌باکی مطلق",englishTitle:"Absolute Fearlessness",category:"حالات خاص و تجربه‌های تغییریافته",description:"ترس از مرگ، ترس از شکست، ترس از قضاوت — همه محو می‌شوند. شما تبدیل به نیرویی غیرقابل‌توقف می‌شوید.",scientificBasis:"High Beta (26Hz) for fearless action + Gamma (40Hz) for amygdala override + 396Hz for liberating fear",frequencyBase:396,binauralBeat:26,duration:1200,colorTheme:"#d50000",icon:"🦁"},
+{id:67,title:"فرکانس خلاقیت وحشی",englishTitle:"Wild Creativity",category:"حالات خاص و تجربه‌های تغییریافته",description:"خلاقیتی بی‌مهار و وحشی. ایده‌ها مانند آتشفشان فوران می‌کنند. هیچ قاعده‌ای وجود ندارد، فقط خلق کردن.",scientificBasis:"Theta-Alpha (7Hz) for divergent thinking + Gamma (38Hz) for creative synthesis + 417Hz for facilitating change",frequencyBase:417,binauralBeat:7,duration:1200,colorTheme:"#ff6d00",icon:"🌋"},
+{id:68,title:"ارتعاش تمرکز فوق‌العاده",englishTitle:"Super Focus (Hyperfocus)",category:"حالات خاص و تجربه‌های تغییریافته",description:"تمرکزی که ساعت‌ها بدون خستگی ادامه دارد. غرقه‌شدن کامل در کار. زمان و مکان محو می‌شود.",scientificBasis:"Beta-SMR (14Hz) for sustained attention + Gamma (40Hz) for sensory gating",frequencyBase:14,binauralBeat:14,duration:1200,colorTheme:"#00bfa5",icon:"🎯"},
+{id:69,title:"فرکانس سفر درونی",englishTitle:"Inner Journey",category:"حالات خاص و تجربه‌های تغییریافته",description:"سفر به اعماق ناخودآگاه. کشف بخش‌های پنهان وجود، گنج‌های مدفون درونی و پاسخ سوالات عمیق زندگی.",scientificBasis:"Theta (5Hz) dominant for deep introspection + 852Hz for inner truth access",frequencyBase:852,binauralBeat:5,duration:1200,colorTheme:"#304ffe",icon:"🧭"},
+{id:70,title:"ارتعاش حس ششم",englishTitle:"Sixth Sense Activation",category:"حالات خاص و تجربه‌های تغییریافته",description:"شهود قوی‌تر از منطق. حس‌کردن چیزهایی که هنوز اتفاق نیفتاده. قابلیت پیش‌بینی و آگاهی فراحسی.",scientificBasis:"Gamma (44Hz) in right temporal lobe + Theta (7Hz) for intuitive processing + 852Hz",frequencyBase:852,binauralBeat:44,duration:1200,colorTheme:"#aa00ff",icon:"🔮"},
+{id:71,title:"فرکانس وارونگی ذهنی",englishTitle:"Mind Inversion",category:"حالات خاص و تجربه‌های تغییریافته",description:"دیدن جهان از زاویه‌ای کاملاً متفاوت. باورهای قدیمی زیر سوال می‌روند و پارادایم‌های جدید شکل می‌گیرند.",scientificBasis:"Gamma-Theta paradox (40Hz + 4Hz) for cognitive dissonance resolution + 741Hz for awakening",frequencyBase:741,binauralBeat:4,duration:1200,colorTheme:"#311b92",icon:"🔀"},
+{id:72,title:"ارتعاش قدرت اراده",englishTitle:"Willpower Vibration",category:"حالات خاص و تجربه‌های تغییریافته",description:"اراده‌ای فولادین برای ترک عادت‌های بد، شروع عادت‌های خوب و ادامه دادن وقتی همه می‌گویند تسلیم شو.",scientificBasis:"High Beta (24Hz) for dorsolateral prefrontal activation + 40Hz Gamma for self-control",frequencyBase:24,binauralBeat:24,duration:1200,colorTheme:"#b71c1c",icon:"💪"},
+{id:73,title:"فرکانس احساس پرواز",englishTitle:"Flying Sensation",category:"حالات خاص و تجربه‌های تغییریافته",description:"احساس سبکی و شناور شدن. انگار از بدن خود جدا شده‌اید و در فضا حرکت می‌کنید. رهایی از جاذبه زمین.",scientificBasis:"Theta (6Hz) for vestibular illusion + Alpha (10Hz) for weightlessness sensation + 432Hz",frequencyBase:432,binauralBeat:6,duration:1200,colorTheme:"#81d4fa",icon:"🕊️"},
+{id:74,title:"ارتعاش غرقه‌شدن (فلو)",englishTitle:"Flow State Immersion",category:"حالات خاص و تجربه‌های تغییریافته",description:"حالت فلو — جایی که عمل و آگاهی یکی می‌شوند. بی‌زحمتی مطلق، عملکرد اوج و لذت خالص از فرآیند.",scientificBasis:"Alpha-Theta border (8Hz) + transient hypofrontality + 528Hz for flow transformation",frequencyBase:528,binauralBeat:8,duration:1200,colorTheme:"#26c6da",icon:"🌊"},
+{id:75,title:"فرکانس بی‌زمانی",englishTitle:"Timelessness",category:"حالات خاص و تجربه‌های تغییریافته",description:"وقتی زمان متوقف می‌شود. گذشته و آینده محو می‌شوند. فقط لحظه ابدی حال وجود دارد. تجربه‌ای شبیه جاودانگی.",scientificBasis:"Theta (4Hz) for time perception dissolution + 963Hz for transcendent consciousness",frequencyBase:963,binauralBeat:4,duration:1200,colorTheme:"#4fc3f7",icon:"♾️"},
+
+// ---- 76-85: سلامتی و زیبایی ----
+{id:76,title:"جوانی و بازسازی سلولی",englishTitle:"Youth & Cellular Regeneration",category:"سلامتی و زیبایی",description:"فرکانسی که سلول‌های شما را به جوان‌سازی و بازسازی تشویق می‌کند. احساس سرزندگی و طراوت جوانی در هر سلول بدن.",scientificBasis:"528Hz Solfeggio 'DNA repair frequency' + Delta (2Hz) for deep cellular regeneration",frequencyBase:528,binauralBeat:2,duration:1200,colorTheme:"#00e676",icon:"🧬"},
+{id:77,title:"ارتعاش کاهش وزن آسان",englishTitle:"Easy Weight Loss Vibration",category:"سلامتی و زیبایی",description:"تنظیم متابولیسم و کاهش اشتها در سطح ناخودآگاه. این فرکانس، سیگنال‌های گرسنگی کاذب را خاموش می‌کند.",scientificBasis:"Beta (18Hz) for metabolic regulation + Alpha (10Hz) for appetite suppression + 285Hz for body field reset",frequencyBase:285,binauralBeat:18,duration:1200,colorTheme:"#66bb6a",icon:"⚖️"},
+{id:78,title:"خواب عمیق ترمیمی",englishTitle:"Deep Restorative Sleep",category:"سلامتی و زیبایی",description:"خوابی عمیق و شفابخش که بدن و ذهن شما را کاملاً بازسازی می‌کند. صبح با انرژی فوق‌العاده بیدار می‌شوید.",scientificBasis:"Delta (2Hz) entrainment for deep sleep + 174Hz for pain relief + 432Hz for natural calming",frequencyBase:174,binauralBeat:2,duration:1200,colorTheme:"#1b5e20",icon:"😴"},
+{id:79,title:"درمان معجزه‌آسا",englishTitle:"Miraculous Healing",category:"سلامتی و زیبایی",description:"فعال‌سازی سیستم شفای درونی بدن. این فرکانس، توانایی طبیعی بدن در التیام را به حداکثر می‌رساند.",scientificBasis:"528Hz + 285Hz combined for deep healing + Delta (1Hz) for maximum regeneration",frequencyBase:528,binauralBeat:1,duration:1200,colorTheme:"#2e7d32",icon:"💚"},
+{id:80,title:"افزایش تستوسترون طبیعی",englishTitle:"Natural Testosterone Boost",category:"سلامتی و زیبایی",description:"تحریک غدد درون‌ریز برای تولید طبیعی تستوسترون. افزایش انرژی، عضله‌سازی و اعتمادبه‌نفس طبیعی.",scientificBasis:"Beta (20Hz) for endocrine stimulation + Alpha (12Hz) for stress reduction (cortisol blocks T) + 285Hz",frequencyBase:210,binauralBeat:20,duration:1200,colorTheme:"#2e7d32",icon:"💪"},
+{id:81,title:"فرکانس پوست درخشان",englishTitle:"Glowing Skin Frequency",category:"سلامتی و زیبایی",description:"افزایش جریان خون به پوست، تحریک کلاژن‌سازی و کاهش التهاب. پوست شما از درون می‌درخشد.",scientificBasis:"Alpha (10Hz) for circulation enhancement + 528Hz for cellular repair + 285Hz for tissue regeneration",frequencyBase:285,binauralBeat:10,duration:1200,colorTheme:"#81c784",icon:"✨"},
+{id:82,title:"ارتعاش تقویت سیستم ایمنی",englishTitle:"Immune System Boost",category:"سلامتی و زیبایی",description:"تقویت ارتش درونی بدن. سلول‌های ایمنی فعال‌تر و هوشیارتر می‌شوند. بیماری‌ها کمتر به سراغ شما می‌آیند.",scientificBasis:"Alpha (10Hz) for immune system activation + 528Hz for DNA repair + 174Hz for pain/inflammation relief",frequencyBase:174,binauralBeat:10,duration:1200,colorTheme:"#388e3c",icon:"🛡️"},
+{id:83,title:"فرکانس کاهش استرس",englishTitle:"Stress Reduction",category:"سلامتی و زیبایی",description:"حل شدن تنش‌های ذهنی و جسمی مانند برف در آفتاب بهاری. آرامشی عمیق که تمام وجود شما را فرا می‌گیرد.",scientificBasis:"Alpha (10Hz) for relaxation + Theta (6Hz) for deep calm + 432Hz for natural harmony + cortisol reduction patterns",frequencyBase:432,binauralBeat:10,duration:1200,colorTheme:"#4caf50",icon:"🌿"},
+{id:84,title:"ارتعاش افزایش انرژی",englishTitle:"Energy Boost",category:"سلامتی و زیبایی",description:"بدون قهوه و بدون مواد شیمیایی. این فرکانس، انرژی طبیعی بدن شما را شارژ می‌کند و خستگی را از بین می‌برد.",scientificBasis:"Beta (18Hz) for alertness + Gamma (35Hz) for energy activation + 285Hz for vitality",frequencyBase:285,binauralBeat:18,duration:1200,colorTheme:"#43a047",icon:"⚡"},
+{id:85,title:"فرکانس سم‌زدایی بدن",englishTitle:"Body Detox Frequency",category:"سلامتی و زیبایی",description:"پاکسازی سموم از بدن و ذهن. این فرکانس، فرآیند طبیعی سم‌زدایی کبد، کلیه و سیستم لنفاوی را تقویت می‌کند.",scientificBasis:"Delta (2Hz) for deep organ regeneration + 396Hz for toxin release + 174Hz for organ support",frequencyBase:174,binauralBeat:2,duration:1200,colorTheme:"#2e7d32",icon:"💧"},
+
+// ---- 86-100: خلاقیت، یادگیری و نبوغ ----
+{id:86,title:"نبوغ هنری",englishTitle:"Artistic Genius",category:"خلاقیت و یادگیری و نبوغ",description:"بیداری نبوغ هنری درونی. الهام‌های ناگهانی، ترکیب‌های بدیع و خلق آثاری که جهان را شگفت‌زده می‌کند.",scientificBasis:"Theta-Alpha (7Hz) for creative flow + Gamma (40Hz) for artistic synthesis + 417Hz for creative change",frequencyBase:417,binauralBeat:7,duration:1200,colorTheme:"#ff6d00",icon:"🎨"},
+{id:87,title:"یادگیری فوق‌سریع",englishTitle:"Super Learning",category:"خلاقیت و یادگیری و نبوغ",description:"هر چیزی را در کوتاه‌ترین زمان یاد بگیرید. این فرکانس، مغز شما را در حالت جذب حداکثری اطلاعات قرار می‌دهد.",scientificBasis:"Alpha-Theta (8Hz) for relaxed alertness optimal for learning + 14Hz for memory encoding",frequencyBase:14,binauralBeat:8,duration:1200,colorTheme:"#ff9100",icon:"📚"},
+{id:88,title:"حافظه فیل‌مانند",englishTitle:"Elephant Memory",category:"خلاقیت و یادگیری و نبوغ",description:"فراموشی دیگر معنی ندارد. این فرکانس، قدرت حافظه بلندمدت و کوتاه‌مدت شما را تا حد شگفت‌انگیزی افزایش می‌دهد.",scientificBasis:"Gamma (40Hz) for memory consolidation + Alpha (12Hz) for hippocampal activation + 528Hz",frequencyBase:256,binauralBeat:40,duration:1200,colorTheme:"#e65100",icon:"🐘"},
+{id:89,title:"ارتعاش نویسندگی",englishTitle:"Writing Vibration",category:"خلاقیت و یادگیری و نبوغ",description:"کلمات مانند رودخانه جاری می‌شوند. این فرکانس، قفل نوشتن را باز می‌کند و الهام ادبی را سرازیر می‌کند.",scientificBasis:"Alpha (10Hz) for linguistic flow + Theta (6Hz) for creative imagery + 741Hz for expression",frequencyBase:741,binauralBeat:10,duration:1200,colorTheme:"#ff6d00",icon:"✍️"},
+{id:90,title:"کشف و شهود علمی",englishTitle:"Scientific Intuition",category:"خلاقیت و یادگیری و نبوغ",description:"لحظه «یوریکا!» را در هر لحظه تجربه کنید. این فرکانس، شهود علمی و توانایی حل مسائل پیچیده را فعال می‌کند.",scientificBasis:"Gamma (40Hz) for insight generation + Beta (18Hz) for logical verification + 852Hz for truth intuition",frequencyBase:852,binauralBeat:40,duration:1200,colorTheme:"#ff8f00",icon:"🔬"},
+{id:91,title:"فرکانس نبوغ موسیقی",englishTitle:"Musical Genius",category:"خلاقیت و یادگیری و نبوغ",description:"شنیدن موسیقی در همه چیز. آهنگسازی، بداهه‌نوازی و درک عمیق هارمونی. مغز شما تبدیل به یک ساز موسیقی می‌شود.",scientificBasis:"Gamma (40Hz) for auditory processing + Alpha (10Hz) for musical flow + 432Hz for harmonic resonance",frequencyBase:432,binauralBeat:40,duration:1200,colorTheme:"#e65100",icon:"🎵"},
+{id:92,title:"ارتعاش حل مسئله",englishTitle:"Problem Solving",category:"خلاقیت و یادگیری و نبوغ",description:"هیچ مسئله‌ای حل‌نشدنی نیست. این فرکانس، هر دو نیمکره مغز را هماهنگ می‌کند تا راه‌حل‌های خلاقانه پیدا کنید.",scientificBasis:"Balanced Alpha-Beta (12Hz) for whole-brain integration + Gamma (36Hz) for solution insight",frequencyBase:256,binauralBeat:12,duration:1200,colorTheme:"#f57c00",icon:"💡"},
+{id:93,title:"فرکانس ایده‌پردازی",englishTitle:"Ideation & Brainstorming",category:"خلاقیت و یادگیری و نبوغ",description:"سیل ایده‌های ناب و بدیع. این فرکانس، ذهن شما را از محدودیت‌های معمول آزاد می‌کند و تفکر واگرا را فعال می‌کند.",scientificBasis:"Theta-Alpha (8Hz) for divergent thinking + Gamma (35Hz) for idea synthesis + 417Hz",frequencyBase:417,binauralBeat:8,duration:1200,colorTheme:"#ff9100",icon:"💭"},
+{id:94,title:"ارتعاش تفکر انتقادی",englishTitle:"Critical Thinking",category:"خلاقیت و یادگیری و نبوغ",description:"دیدن حقیقت پشت ظاهر. تحلیل عمیق، تشخیص منطق از مغالطه و تصمیم‌گیری بر اساس شواهد.",scientificBasis:"Beta (20Hz) for analytical processing + Gamma (38Hz) for logical verification + 741Hz for intuitive expression",frequencyBase:320,binauralBeat:20,duration:1200,colorTheme:"#ef6c00",icon:"🔍"},
+{id:95,title:"فرکانس برنامه‌نویسی",englishTitle:"Programming Flow",category:"خلاقیت و یادگیری و نبوغ",description:"غرقه‌شدن کامل در کد. باگ‌ها خودشان حل می‌شوند، الگوها خودشان آشکار می‌شوند و کد از انگشتانتان جاری می‌شود.",scientificBasis:"SMR Beta (14Hz) for sustained attention + Alpha (10Hz) for relaxed coding + Gamma (32Hz) for pattern recognition",frequencyBase:14,binauralBeat:14,duration:1200,colorTheme:"#e65100",icon:"💻"},
+{id:96,title:"ارتعاش نقاشی و طراحی",englishTitle:"Painting & Design Vibration",category:"خلاقیت و یادگیری و نبوغ",description:"دست شما خودش می‌کشد. ترکیب رنگ‌ها، فرم‌ها و بافت‌ها به‌طور غریزی اتفاق می‌افتد. هنر از درون شما می‌جوشد.",scientificBasis:"Right hemisphere Alpha (10Hz) for visual creativity + Theta (6Hz) for artistic flow state",frequencyBase:396,binauralBeat:10,duration:1200,colorTheme:"#ff6d00",icon:"🖌️"},
+{id:97,title:"فرکانس ریاضی‌دانی",englishTitle:"Mathematical Mind",category:"خلاقیت و یادگیری و نبوغ",description:"دیدن الگوهای ریاضی در جهان. درک شهودی اعداد و فرمول‌ها. مغز شما مانند ماشین‌حساب کوانتومی عمل می‌کند.",scientificBasis:"Gamma (40Hz) for mathematical cognition + Beta (22Hz) for numerical processing",frequencyBase:256,binauralBeat:40,duration:1200,colorTheme:"#e65100",icon:"🔢"},
+{id:98,title:"ارتعاش کارآفرینی",englishTitle:"Entrepreneurship Vibration",category:"خلاقیت و یادگیری و نبوغ",description:"ذهن کارآفرین: ریسک‌پذیر، خلاق، انعطاف‌پذیر و مقاوم. این فرکانس، DNA کارآفرینی را در مغز شما فعال می‌کند.",scientificBasis:"Beta (20Hz) for risk assessment + Gamma (38Hz) for opportunity recognition + 528Hz for transformation",frequencyBase:528,binauralBeat:20,duration:1200,colorTheme:"#ff9100",icon:"🚀"},
+{id:99,title:"فرکانس نبوغ فروش",englishTitle:"Sales Genius",category:"خلاقیت و یادگیری و نبوغ",description:"درک عمیق نیاز مشتری، ارائه جذاب و بستن معامله با ظرافت. فروش برای شما مانند نفس کشیدن طبیعی می‌شود.",scientificBasis:"Beta (18Hz) for persuasion circuits + Gamma (36Hz) for reading buyer psychology + 639Hz for connection",frequencyBase:639,binauralBeat:18,duration:1200,colorTheme:"#ef6c00",icon:"💎"},
+{id:100,title:"ارتعاش خلق شاهکار",englishTitle:"Creating a Masterpiece",category:"خلاقیت و یادگیری و نبوغ",description:"شما اینجا هستید تا شاهکار خلق کنید. این فرکانس، تمام استعدادها و توانایی‌های شما را در نقطه‌ای واحد متمرکز می‌کند تا اثری جاودانه بیافرینید.",scientificBasis:"Full-spectrum Gamma-Theta (40Hz + 6Hz) for ultimate creative state + 963Hz for divine creation + 528Hz for miracle manifestation",frequencyBase:963,binauralBeat:6,duration:1200,colorTheme:"#e65100",icon:"👑"}
+];
+
+// ================================================================
+//  CATEGORIES
+// ================================================================
+const CATEGORIES = [
+  {name:"همه",icon:"🔮",filter:null},
+  {name:"ثروت و فراوانی",icon:"💰",filter:"ثروت و فراوانی"},
+  {name:"عشق و جذابیت",icon:"❤️",filter:"عشق و جذابیت"},
+  {name:"موفقیت و قدرت",icon:"🏆",filter:"موفقیت و قدرت"},
+  {name:"معنویت و فراآگاهی",icon:"🕉️",filter:"معنویت و فراآگاهی"},
+  {name:"حالات خاص",icon:"🌀",filter:"حالات خاص و تجربه‌های تغییریافته"},
+  {name:"سلامتی و زیبایی",icon:"💚",filter:"سلامتی و زیبایی"},
+  {name:"خلاقیت و نبوغ",icon:"🎨",filter:"خلاقیت و یادگیری و نبوغ"}
+];
+
+// ================================================================
+//  AUDIO ENGINE
+// ================================================================
+class NeuroSoundEngine {
+  constructor(){
+    this.ctx=null;this.masterGain=null;this.analyser=null;this.nodes=[];
+    this.isPlaying=false;this.volume=0.6;this.currentState=null;
+  }
+
+  async init(){
+    if(this.ctx)return;
+    this.ctx=new(window.AudioContext||window.webkitAudioContext)();
+    if(this.ctx.state==='suspended')await this.ctx.resume();
+
+    this.masterGain=this.ctx.createGain();
+    this.masterGain.gain.value=this.volume*0.3;
+
+    this.analyser=this.ctx.createAnalyser();
+    this.analyser.fftSize=512;
+    this.analyser.smoothingTimeConstant=0.8;
+
+    this.masterGain.connect(this.analyser);
+    this.analyser.connect(this.ctx.destination);
+  }
+
+  async play(state){
+    await this.init();
+    if(this.ctx.state==='suspended')await this.ctx.resume();
+    this.stopNodes();
+    this.currentState=state;
+    const c=this.ctx;const now=c.currentTime;const f=state.frequencyBase;const b=state.binauralBeat;
+
+    this.masterGain.gain.cancelScheduledValues(now);
+    this.masterGain.gain.setValueAtTime(0,now);
+    this.masterGain.gain.linearRampToValueAtTime(this.volume*0.3,now+2);
+
+    // 1. BASE DRONE
+    const baseOsc=c.createOscillator();
+    baseOsc.type='sine';baseOsc.frequency.value=f;
+    const baseGain=c.createGain();baseGain.gain.value=0.12;
+    baseOsc.connect(baseGain);baseGain.connect(this.masterGain);
+    baseOsc.start(now);this.nodes.push(baseOsc,baseGain);
+
+    // 2. BINAURAL BEATS
+    const bL=c.createOscillator();bL.type='sine';bL.frequency.value=f;
+    const gL=c.createGain();gL.gain.value=0.15;
+    if(c.createStereoPanner){
+      const pan=c.createStereoPanner();pan.pan.value=-1;
+      bL.connect(gL);gL.connect(pan);pan.connect(this.masterGain);
+      this.nodes.push(pan);
+    }else{bL.connect(gL);gL.connect(this.masterGain);}
+    bL.start(now);this.nodes.push(bL,gL);
+
+    const bR=c.createOscillator();bR.type='sine';bR.frequency.value=f+b;
+    const gR=c.createGain();gR.gain.value=0.15;
+    if(c.createStereoPanner){
+      const pan2=c.createStereoPanner();pan2.pan.value=1;
+      bR.connect(gR);gR.connect(pan2);pan2.connect(this.masterGain);
+      this.nodes.push(pan2);
+    }else{bR.connect(gR);gR.connect(this.masterGain);}
+    bR.start(now);this.nodes.push(bR,gR);
+
+    // 3. HARMONICS
+    const harmonics=[2,3,4,5];
+    const harmonicGains=[0.04,0.025,0.015,0.01];
+    harmonics.forEach((h,i)=>{
+      const o=c.createOscillator();o.type='sine';o.frequency.value=f*h;
+      const g=c.createGain();g.gain.value=harmonicGains[i];
+      o.connect(g);g.connect(this.masterGain);
+      o.start(now);this.nodes.push(o,g);
+    });
+
+    // 4. ISOCHRONIC PULSE
+    const isoOsc=c.createOscillator();isoOsc.type='sine';isoOsc.frequency.value=f;
+    const isoGain=c.createGain();isoGain.gain.value=0.5;
+    const lfo=c.createOscillator();lfo.type='sine';lfo.frequency.value=b;
+    const lfoGain=c.createGain();lfoGain.gain.value=0.5;
+    lfo.connect(lfoGain);lfoGain.connect(isoGain.gain);
+    isoOsc.connect(isoGain);isoGain.connect(this.masterGain);
+    isoOsc.start(now);lfo.start(now);
+    this.nodes.push(isoOsc,isoGain,lfo,lfoGain);
+
+    // 5. SPECIAL: Drunk mode extra 8Hz isochronic
+    if(state.isSpecial){
+      const iso2=c.createOscillator();iso2.type='triangle';iso2.frequency.value=111;
+      const iso2Gain=c.createGain();iso2Gain.gain.value=0.5;
+      const lfo2=c.createOscillator();lfo2.type='sine';lfo2.frequency.value=8;
+      const lfo2Gain=c.createGain();lfo2Gain.gain.value=0.5;
+      lfo2.connect(lfo2Gain);lfo2Gain.connect(iso2Gain.gain);
+      iso2.connect(iso2Gain);iso2Gain.connect(this.masterGain);
+      iso2.start(now);lfo2.start(now);
+      this.nodes.push(iso2,iso2Gain,lfo2,lfo2Gain);
+    }
+
+    // 6. ATMOSPHERE (brown noise)
+    const bufSize=c.sampleRate*2;
+    const noiseBuf=c.createBuffer(1,bufSize,c.sampleRate);
+    const data=noiseBuf.getChannelData(0);
+    let lastOut=0;
+    for(let i=0;i<bufSize;i++){
+      const white=Math.random()*2-1;
+      data[i]=(lastOut+0.02*white)/1.02;lastOut=data[i];
+      data[i]*=3.5;
+    }
+    const noise=c.createBufferSource();noise.buffer=noiseBuf;noise.loop=true;
+    const noiseFilt=c.createBiquadFilter();noiseFilt.type='lowpass';
+    noiseFilt.frequency.value=Math.min(f*0.5,400);noiseFilt.Q.value=0.7;
+    const noiseGain=c.createGain();noiseGain.gain.value=0.06;
+    noise.connect(noiseFilt);noiseFilt.connect(noiseGain);noiseGain.connect(this.masterGain);
+    noise.start(now);this.nodes.push(noise,noiseFilt,noiseGain);
+
+    this.isPlaying=true;
+  }
+
+  stopNodes(){
+    const now=this.ctx?this.ctx.currentTime:0;
+    this.nodes.forEach(n=>{
+      try{
+        if(n.stop)n.stop(now+0.05);
+        n.disconnect();
+      }catch(e){}
+    });
+    this.nodes=[];
+    if(this.masterGain){
+      this.masterGain.gain.cancelScheduledValues(now);
+    }
+  }
+
+  stop(){
+    if(this.masterGain&&this.ctx){
+      const now=this.ctx.currentTime;
+      this.masterGain.gain.cancelScheduledValues(now);
+      this.masterGain.gain.setValueAtTime(this.masterGain.gain.value,now);
+      this.masterGain.gain.linearRampToValueAtTime(0,now+1);
+      setTimeout(()=>{this.stopNodes();},1100);
+    }else{this.stopNodes();}
+    this.isPlaying=false;this.currentState=null;
+  }
+
+  setVolume(v){
+    this.volume=v;
+    if(this.masterGain&&this.ctx){
+      const now=this.ctx.currentTime;
+      this.masterGain.gain.cancelScheduledValues(now);
+      this.masterGain.gain.linearRampToValueAtTime(v*0.3,now+0.1);
+    }
+  }
+
+  getFrequencyData(){
+    if(!this.analyser)return new Uint8Array(0);
+    const arr=new Uint8Array(this.analyser.frequencyBinCount);
+    this.analyser.getByteFrequencyData(arr);
+    return arr;
+  }
+}
+
+// ================================================================
+//  VISUALIZER
+// ================================================================
+class NeuroVisualizer {
+  constructor(canvas){
+    this.canvas=canvas;
+    this.ctx=canvas.getContext('2d');
+    this.particles=[];
+    this.time=0;
+    this.stateColor='#00f0ff';
+    this.beatSpeed=5;
+    this.running=false;
+    this.resize();
+    window.addEventListener('resize',()=>this.resize());
+  }
+
+  resize(){
+    this.canvas.width=window.innerWidth;
+    this.canvas.height=window.innerHeight;
+    this.cx=this.canvas.width/2;
+    this.cy=this.canvas.height/2;
+  }
+
+  setState(color,speed){
+    this.stateColor=color;
+    this.beatSpeed=speed;
+    this.initParticles();
+  }
+
+  initParticles(){
+    this.particles=[];
+    const count=Math.min(150,Math.floor(this.canvas.width*this.canvas.height/6000));
+    for(let i=0;i<count;i++){
+      this.particles.push({
+        angle:Math.random()*Math.PI*2,
+        radius:Math.random()*Math.min(this.cx,this.cy)*0.9+30,
+        speed:(Math.random()*0.005+0.002)*(Math.random()>0.5?1:-1),
+        size:Math.random()*2.5+0.5,
+        hue:Math.random()*60-30,
+        alpha:Math.random()*0.6+0.2,
+        orbitPhase:Math.random()*Math.PI*2
+      });
+    }
+  }
+
+  start(){this.running=true;this.animate();}
+  stop(){this.running=false;}
+
+  animate(){
+    if(!this.running)return;
+    requestAnimationFrame(()=>this.animate());
+    this.time+=0.016;
+    this.draw();
+  }
+
+  draw(){
+    const c=this.ctx;const w=this.canvas.width;const h=this.canvas.height;
+    c.fillStyle='rgba(5,5,16,0.12)';
+    c.fillRect(0,0,w,h);
+
+    const baseHue=this.hexToHue(this.stateColor);
+    const speedFactor=this.beatSpeed/10;
+    const pulse=Math.sin(this.time*speedFactor*0.5)*0.3+0.7;
+
+    const grad=c.createRadialGradient(this.cx,this.cy,0,this.cx,this.cy,Math.max(w,h)*0.6);
+    grad.addColorStop(0,`hsla(${baseHue},60%,15%,${0.03*pulse})`);
+    grad.addColorStop(0.5,`hsla(${baseHue+30},50%,8%,${0.02*pulse})`);
+    grad.addColorStop(1,'transparent');
+    c.fillStyle=grad;c.fillRect(0,0,w,h);
+
+    // Concentric rings
+    for(let i=0;i<6;i++){
+      const r=60+i*50+Math.sin(this.time*speedFactor+i)*15;
+      const alpha=0.08-i*0.008;
+      if(alpha<=0)continue;
+      c.beginPath();c.arc(this.cx,this.cy,r,0,Math.PI*2);
+      c.strokeStyle=`hsla(${baseHue+i*15},70%,60%,${alpha})`;
+      c.lineWidth=1;c.stroke();
+    }
+
+    // Mandala
+    c.save();c.translate(this.cx,this.cy);
+    c.rotate(this.time*0.15*speedFactor);
+    for(let i=0;i<12;i++){
+      const angle=(i/12)*Math.PI*2;
+      c.save();c.rotate(angle);
+      const pr=80+Math.sin(this.time*speedFactor*2+i)*20;
+      c.beginPath();
+      c.ellipse(pr,0,pr*0.4,pr*0.08,0,0,Math.PI*2);
+      c.strokeStyle=`hsla(${baseHue+i*30},80%,60%,${0.12+Math.sin(this.time+i)*0.05})`;
+      c.lineWidth=1;c.stroke();c.restore();
+    }
+    for(let i=0;i<6;i++){
+      const angle=(i/6)*Math.PI*2;
+      c.save();c.rotate(angle+this.time*0.1);
+      c.beginPath();c.moveTo(0,0);
+      c.lineTo(40+Math.sin(this.time*speedFactor)*10,0);
+      c.strokeStyle=`hsla(${baseHue+60},70%,65%,0.15)`;
+      c.lineWidth=0.8;c.stroke();c.restore();
+    }
+    c.restore();
+
+    // Particles
+    this.particles.forEach(p=>{
+      p.angle+=p.speed*speedFactor;
+      const wobble=Math.sin(this.time*2+p.orbitPhase)*15;
+      const r=p.radius+wobble;
+      const x=this.cx+Math.cos(p.angle)*r;
+      const y=this.cy+Math.sin(p.angle)*r;
+      c.beginPath();c.arc(x,y,p.size,0,Math.PI*2);
+      const hue=(baseHue+p.hue+this.time*10)%360;
+      c.fillStyle=`hsla(${hue},80%,65%,${p.alpha})`;c.fill();
+      c.beginPath();c.arc(x,y,p.size*3,0,Math.PI*2);
+      c.fillStyle=`hsla(${hue},80%,65%,${p.alpha*0.1})`;c.fill();
+    });
+
+    // Center pulse
+    const centerR=20+Math.sin(this.time*speedFactor*3)*8;
+    const cg=c.createRadialGradient(this.cx,this.cy,0,this.cx,this.cy,centerR);
+    cg.addColorStop(0,`hsla(${baseHue},80%,70%,0.3)`);
+    cg.addColorStop(1,'transparent');
+    c.fillStyle=cg;c.beginPath();
+    c.arc(this.cx,this.cy,centerR,0,Math.PI*2);c.fill();
+
+    // Frequency bars
+    if(engine&&engine.analyser){
+      const data=engine.getFrequencyData();
+      if(data.length>0){
+        const barCount=64;const step=Math.floor(data.length/barCount);
+        for(let i=0;i<barCount;i++){
+          const val=data[i*step]/255;
+          const angle=(i/barCount)*Math.PI*2-Math.PI/2;
+          const innerR=Math.min(this.cx,this.cy)*0.92;
+          const outerR=innerR+val*60;
+          const x1=this.cx+Math.cos(angle)*innerR;
+          const y1=this.cy+Math.sin(angle)*innerR;
+          const x2=this.cx+Math.cos(angle)*outerR;
+          const y2=this.cy+Math.sin(angle)*outerR;
+          c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);
+          c.strokeStyle=`hsla(${baseHue+i*3},80%,60%,${0.3+val*0.4})`;
+          c.lineWidth=2;c.stroke();
+        }
+      }
+    }
+  }
+
+  hexToHue(hex){
+    hex=hex.replace('#','');
+    const r=parseInt(hex.substr(0,2),16)/255;
+    const g=parseInt(hex.substr(2,2),16)/255;
+    const b=parseInt(hex.substr(4,2),16)/255;
+    const max=Math.max(r,g,b),min=Math.min(r,g,b);
+    let h=0;
+    if(max!==min){
+      const d=max-min;
+      if(max===r)h=((g-b)/d+(g<b?6:0))/6;
+      else if(max===g)h=((b-r)/d+2)/6;
+      else h=((r-g)/d+4)/6;
+    }
+    return h*360;
+  }
+}
+
+// ================================================================
+//  UI CONTROLLER
+// ================================================================
+const engine=new NeuroSoundEngine();
+const canvas=document.getElementById('visualizer');
+const viz=new NeuroVisualizer(canvas);
+
+let currentFilter=null;
+let currentSearch='';
+let safetyAccepted=false;
+let playingState=null;
+let timerInterval=null;
+let startTime=0;
+let pausedAt=0;
+let isPaused=false;
+
+function renderFilters(){
+  const container=document.getElementById('filters');
+  container.innerHTML='';
+  CATEGORIES.forEach((cat,i)=>{
+    const pill=document.createElement('button');
+    pill.className='filter-pill'+(i===0?' active':'');
+    pill.textContent=cat.icon+' '+cat.name;
+    pill.onclick=()=>{
+      document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+      pill.classList.add('active');
+      currentFilter=cat.filter;
+      renderGrid();
+    };
+    container.appendChild(pill);
+  });
+}
+
+function getFiltered(){
+  return STATES.filter(s=>{
+    const catMatch=!currentFilter||s.category===currentFilter;
+    const searchMatch=!currentSearch||
+      s.title.includes(currentSearch)||
+      s.englishTitle.toLowerCase().includes(currentSearch.toLowerCase())||
+      s.description.includes(currentSearch)||
+      s.category.includes(currentSearch);
+    return catMatch&&searchMatch;
+  });
+}
+
+function renderGrid(){
+  const grid=document.getElementById('grid');
+  const filtered=getFiltered();
+  grid.innerHTML='';
+  filtered.forEach((s,i)=>{
+    const card=document.createElement('div');
+    card.className='card';
+    card.style.setProperty('--card-color',s.colorTheme);
+    card.style.setProperty('--card-glow',s.colorTheme+'33');
+    card.style.setProperty('--card-bg',s.colorTheme+'15');
+    card.style.animationDelay=(i*0.03)+'s';
+    card.innerHTML=`
+      <div class="card-icon">${s.icon}</div>
+      <div class="card-title">${s.title}</div>
+      <div class="card-eng">${s.englishTitle}</div>
+      <div class="card-badge">${s.category}</div>
+      <div class="card-desc">${s.description}</div>
+      <div class="card-bottom">
+        <span class="card-freq">${s.frequencyBase} Hz | ${s.binauralBeat} Hz beat</span>
+        <button class="play-btn" title="پخش">▶</button>
+      </div>
+    `;
+    card.querySelector('.play-btn').onclick=(e)=>{e.stopPropagation();startPlaying(s);};
+    card.onclick=()=>startPlaying(s);
+    grid.appendChild(card);
+  });
+}
+
+function startPlaying(state){
+  if(!safetyAccepted){
+    showSafetyModal(()=>startPlaying(state));
+    return;
+  }
+
+  playingState=state;
+  isPaused=false;pausedAt=0;
+  engine.play(state);
+
+  document.getElementById('pIcon').textContent=state.icon;
+  document.getElementById('pTitle').textContent=state.title;
+  document.getElementById('pDesc').textContent=state.description.substring(0,120)+'...';
+
+  const warnEl=document.getElementById('pWarning');
+  if(state.isSpecial){
+    warnEl.style.display='block';
+    warnEl.textContent='⚠️ حالا دیگه پشت فرمون نشستی؟! تقصیر ما نیست ها! 🤪';
+  }else{warnEl.style.display='none';}
+
+  document.getElementById('playPauseBtn').textContent='⏸';
+  document.getElementById('brainPulse').style.display='block';
+  document.getElementById('player').classList.add('visible');
+
+  viz.setState(state.colorTheme,state.binauralBeat);
+  canvas.classList.add('active');
+  document.getElementById('dimOverlay').classList.add('active');
+  viz.start();
+  startTimer(state.duration);
+}
+
+function stopPlaying(){
+  engine.stop();
+  viz.stop();
+  canvas.classList.remove('active');
+  document.getElementById('dimOverlay').classList.remove('active');
+  document.getElementById('player').classList.remove('visible');
+  document.getElementById('brainPulse').style.display='none';
+  clearInterval(timerInterval);
+  playingState=null;isPaused=false;
+  document.getElementById('progressFill').style.width='0%';
+}
+
+function togglePause(){
+  if(!playingState)return;
+  if(isPaused){
+    engine.ctx.resume();
+    isPaused=false;
+    document.getElementById('playPauseBtn').textContent='⏸';
+    startTimer(playingState.duration-pausedAt);
+    viz.start();
+  }else{
+    engine.ctx.suspend();
+    isPaused=true;
+    pausedAt=(Date.now()-startTime)/1000;
+    document.getElementById('playPauseBtn').textContent='▶';
+    clearInterval(timerInterval);
+    viz.stop();
+  }
+}
+
+function startTimer(duration){
+  clearInterval(timerInterval);
+  startTime=Date.now()-(pausedAt*1000);
+  timerInterval=setInterval(()=>{
+    if(isPaused)return;
+    const elapsed=(Date.now()-startTime)/1000;
+    const remaining=Math.max(0,duration-elapsed);
+    const progress=Math.min(1,elapsed/duration);
+    document.getElementById('progressFill').style.width=(progress*100)+'%';
+    document.getElementById('timeElapsed').textContent=formatTime(elapsed);
+    document.getElementById('timeRemaining').textContent=formatTime(remaining);
+    if(progress>=1)stopPlaying();
+  },200);
+}
+
+function formatTime(s){
+  const m=Math.floor(s/60);
+  const sec=Math.floor(s%60);
+  return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+}
+
+function showSafetyModal(onAccept){
+  const modal=document.getElementById('safetyModal');
+  modal.classList.add('show');
+  document.getElementById('acceptSafety').onclick=()=>{
+    safetyAccepted=true;
+    modal.classList.remove('show');
+    if(onAccept)onAccept();
+  };
+}
+
+document.getElementById('volSlider').addEventListener('input',function(){
+  engine.setVolume(this.value/100);
+});
+document.getElementById('playPauseBtn').addEventListener('click',togglePause);
+document.getElementById('stopBtn').addEventListener('click',stopPlaying);
+document.getElementById('searchInput').addEventListener('input',function(){
+  currentSearch=this.value.trim();
+  renderGrid();
+});
+
+// ================================================================
+//  INIT
+// ================================================================
+renderFilters();
+renderGrid();
+</script>
+</body>
+</html>
